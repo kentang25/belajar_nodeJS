@@ -143,18 +143,86 @@
 // getdata().then(data => console.log('final data : ', data));
 
 
-const fs = require('fs').promises;
+// const fs = require('fs').promises;
 
-async function readFile()
-{
-    try {
-        const data = await fs.readFile('README.md', 'utf8');
-        console.log(data);
-    }catch(error){
-        console.error('error data', error);
+// async function readFile()
+// {
+//     try {
+//         const data = await fs.readFile('README.md', 'utf8');
+//         console.log(data);
+//     }catch(error){
+//         console.error('error data', error);
+//     }
+// }
+
+// readFile();
+
+// async function fetchUserData() {
+//   try {
+//     const response = await fetch('https://api.example.com/users/1');
+//     if (!response.ok) {
+//       throw new Error(`HTTP error: ${response.status}`);
+//     }
+//     const user = await response.json();
+//     console.log('User data:', user);
+//     return user;
+//   } catch (error) {
+//     console.error('Error fetching user data:', error);
+//     throw error; 
+//   }
+// }
+
+// const http = require('http');
+
+// const server = http.createServer((req, res) => {
+
+    function fetchData(id)
+    {
+        return new Promise( resolve => {
+            setTimeout(() => resolve(`Data for id ${id}`), 1000);
+        });
     }
-}
+    
+    async function fetchSequential()
+    {
+        console.time('sequential');
+        const data1 = await fetchData(1);
+        const data2 = await fetchData(2);
+        const data3 = await fetchData(3);
+        console.timeEnd('sequential');
+        return [data1, data2, data3];
+    }
+    
+    async function fetchParallel()
+    {
+        console.time('parallel');
+    
+        const result = await Promise.all([
+            fetchData(1),
+            fetchData(2),
+            fetchData(3)
+        ]);
+        console.timeEnd('parallel');
+        return result;
+    }
+    
+    async function runDemo()
+    {
+        console.log('run sequentially...');
+        const seqResult = await fetchSequential();
+        console.log(seqResult);
+    
+        console.log('\nRunning in parallel');
+        const perResult = await fetchParallel();
+        console.log(perResult);
+    }
 
-readFile();
+    runDemo();
+// });
+
+// server.listen(3000, () => {
+//     console.log('Server jalan di http://localhost:3000');
+// });
+
 
 
