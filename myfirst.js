@@ -176,53 +176,129 @@
 
 // const server = http.createServer((req, res) => {
 
-    function fetchData(id)
-    {
-        return new Promise( resolve => {
-            setTimeout(() => resolve(`Data for id ${id}`), 1000);
-        });
-    }
+    // function fetchData(id)
+    // {
+    //     return new Promise( resolve => {
+    //         setTimeout(() => resolve(`Data for id ${id}`), 1000);
+    //     });
+    // }
     
-    async function fetchSequential()
-    {
-        console.time('sequential');
-        const data1 = await fetchData(1);
-        const data2 = await fetchData(2);
-        const data3 = await fetchData(3);
-        console.timeEnd('sequential');
-        return [data1, data2, data3];
-    }
+    // async function fetchSequential()
+    // {
+    //     console.time('sequential');
+    //     const data1 = await fetchData(1);
+    //     const data2 = await fetchData(2);
+    //     const data3 = await fetchData(3);
+    //     console.timeEnd('sequential');
+    //     return [data1, data2, data3];
+    // }
     
-    async function fetchParallel()
-    {
-        console.time('parallel');
+    // async function fetchParallel()
+    // {
+    //     console.time('parallel');
     
-        const result = await Promise.all([
-            fetchData(1),
-            fetchData(2),
-            fetchData(3)
-        ]);
-        console.timeEnd('parallel');
-        return result;
-    }
+    //     const result = await Promise.all([
+    //         fetchData(1),
+    //         fetchData(2),
+    //         fetchData(3)
+    //     ]);
+    //     console.timeEnd('parallel');
+    //     return result;
+    // }
     
-    async function runDemo()
-    {
-        console.log('run sequentially...');
-        const seqResult = await fetchSequential();
-        console.log(seqResult);
+    // async function runDemo()
+    // {
+    //     console.log('run sequentially...');
+    //     const seqResult = await fetchSequential();
+    //     console.log(seqResult);
     
-        console.log('\nRunning in parallel');
-        const perResult = await fetchParallel();
-        console.log(perResult);
-    }
+    //     console.log('\nRunning in parallel');
+    //     const perResult = await fetchParallel();
+    //     console.log(perResult);
+    // }
 
-    runDemo();
+    // runDemo();
 // });
 
 // server.listen(3000, () => {
 //     console.log('Server jalan di http://localhost:3000');
 // });
 
+//  --- async with callback ----
+
+function getUser(userid, callback)
+{
+    setTimeout(() => {
+        callback(null, {id : userid, name:'john'});
+    }, 1000);
+}
+
+function getUserPost(user, callback)
+{
+    setTimeout(() => {
+        callback(null, ['Post 1', 'Post 2']);
+    }, 1000);
+}
+
+getUser(1, (error, user) => {
+    if(error){
+        console.error(error);
+        return;
+    }
+    console.log('User', user);
+
+getUserPost(user, (error,post) => {
+    if(error){
+        console.error(error);
+        return;
+    }
+    console.log('Posts', post);
+    });
+});
+
+// --- async with promise ---
+
+function getUserPromise(userId)
+{
+    return new Promise(resolve => {
+        setTimeout(() =>{
+            resolve ({id : userId, name:'John'});
+        }, 1000);
+    });
+}
+
+function getPostUserPromise(post)
+{
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve (['post 1', 'post 2']);
+        }, 1000);
+    });
+}
+
+getUserPromise(1)
+    .then(user => {
+        console.log('User' , user);
+        return getPostUserPromise(user);
+    })
+    .then(post => {
+        console.log('Post' , post);
+    })
+    .catch(error => {
+        console.error(error);
+    });
 
 
+async function getUserAndPost(){
+    try{
+        const user = await getUserPromise(1);
+        console.log('user :', user);
+
+        const post = await getPostUserPromise(user);
+        console.log('post :', post);
+    }catch(error){
+        console.error(error);
+    }
+}
+
+getUserAndPost();
