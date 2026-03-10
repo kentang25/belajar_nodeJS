@@ -1,65 +1,74 @@
-const http = require('http');
+const http  = require('http');
+const fs    = require('fs').promises;
 
-let todos = [];
+const port = 3000;
 
-const server = http.createServer((req, res) => {
-
-    // Header supaya bisa tampil di browser
-    res.setHeader('Content-Type', 'application/json');
-
-    // GET semua todo
-    if (req.url === '/todos' && req.method === 'GET') {
-        res.end(JSON.stringify(todos));
-    }
-
-    // Tambah todo
-    else if (req.url === '/todos' && req.method === 'POST') {
-    let body = '';
-
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
-
-    req.on('end', () => {
-
-        console.log("ISI BODY:", body);
-
-        try {
-            const data = JSON.parse(body);
-
-            todos.push(data.todo);
-
-            res.end(JSON.stringify({
-                message: "Todo ditambahkan",
-                todos: todos
-            }));
-
-        } catch (error) {
-            res.end(JSON.stringify({
-                message: "JSON tidak valid",
-                error: error.message
-            }));
-        }
-    });
+async function readTodos()
+{
+    const data = await fs.readFile('todos.json', 'utf8');
+    return JSON.parse(data);
 }
 
-    // Hapus todo
-    else if (req.url.startsWith('/todos/') && req.method === 'DELETE') {
-        const id = parseInt(req.url.split('/')[2]);
-        todos.splice(id, 1);
+async function saveTodos(todos)
+{
+    await fs.writeFile('todos.json', JSON.stringify(todos, null, 2));
+}
 
-        res.end(JSON.stringify({
-            message: "Todo dihapus",
-            todos: todos
-        }));
+const server = http.createServer(async (req, res) => {
+    if(req.method === 'GET' && req.url === '/'){
+        try{
+            const html = await fs.readFile('index.html');
+            res.writeHead(200, {'Content-Type':'html/text'});
+            res.end(html);
+        }catch(error){
+            res.writeHead(505);
+            res.end('file tidak ditemukan');
+        }
+    } 
+    else if(req.method === 'GET' && req.url === '/todos'){
+        try{
+            const addTodos = await readTodos();
+            res.writeHead(200,{'Content-Type':'application/json'});
+            res.end(readTodos);
+        }catch(error){
+            res.writeHead(505);
+            res.end('error menampilkan data');
+        }
     }
 
-    else {
-        res.end(JSON.stringify({ message: "Route tidak ditemukan" }));
-    }
+    else if(req.method === 'POST' && req.url === '/todos'){
+        let body = '';
 
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try{
+                const newTodos = JSON.parse(body);
+                const todos = await readTodos();
+                const todo  = {
+                    id : todos.lenght+1,
+                    task : newTodos.task
+                }
+
+                todos.push(todo);
+
+                await saveTodos(todos);
+
+                res.writeHead(201, {'Content-Type':'application/json'});
+                res.end(JSON.stringify(todos));
+            }catch(error){
+                res.writeHead(505);
+                res.end('error menambah todos');
+            }
+        });
+    }else{
+        res.writeHead(404);
+        res.end('not found');
+    }
 });
 
-server.listen(3000, () => {
-    console.log('Server jalan di http://localhost:3000');
+server.listen(port, () =>{
+    console.log(`Server running http://localhost:${port}`);
 });

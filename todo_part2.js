@@ -37,10 +37,14 @@ const server = http.createServer(async (req, res) => {
         req.on('data', chunk => {
             body += chunk.toString();
         });
+        
+        console.log('Body:', body);
 
         req.on('end', async () => {
             try {
                 const newTodo = JSON.parse(body);
+
+                console.log(newTodo);
 
                 const todos = await readTodos();
 

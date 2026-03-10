@@ -226,79 +226,114 @@
 
 //  --- async with callback ----
 
-function getUser(userid, callback)
+// function getUser(userid, callback)
+// {
+//     setTimeout(() => {
+//         callback(null, {id : userid, name:'john'});
+//     }, 1000);
+// }
+
+// function getUserPost(user, callback)
+// {
+//     setTimeout(() => {
+//         callback(null, ['Post 1', 'Post 2']);
+//     }, 1000);
+// }
+
+// getUser(1, (error, user) => {
+//     if(error){
+//         console.error(error);
+//         return;
+//     }
+//     console.log('User', user);
+
+// getUserPost(user, (error,post) => {
+//     if(error){
+//         console.error(error);
+//         return;
+//     }
+//     console.log('Posts', post);
+//     });
+// });
+
+// // --- async with promise ---
+
+// function getUserPromise(userId)
+// {
+//     return new Promise(resolve => {
+//         setTimeout(() =>{
+//             resolve ({id : userId, name:'John'});
+//         }, 1000);
+//     });
+// }
+
+// function getPostUserPromise(post)
+// {
+//     return new Promise(resolve => {
+//         setTimeout(() => {
+//             resolve (['post 1', 'post 2']);
+//         }, 1000);
+//     });
+// }
+
+// getUserPromise(1)
+//     .then(user => {
+//         console.log('User' , user);
+//         return getPostUserPromise(user);
+//     })
+//     .then(post => {
+//         console.log('Post' , post);
+//     })
+//     .catch(error => {
+//         console.error(error);
+//     });
+
+
+// async function getUserAndPost(){
+//     try{
+//         const user = await getUserPromise(1);
+//         console.log('user :', user);
+
+//         const post = await getPostUserPromise(user);
+//         console.log('post :', post);
+//     }catch(error){
+//         console.error(error);
+//     }
+// }
+
+// getUserAndPost();
+
+const fs = require('fs').promises;
+
+async function loadData(userid)
 {
-    setTimeout(() => {
-        callback(null, {id : userid, name:'john'});
-    }, 1000);
-}
-
-function getUserPost(user, callback)
-{
-    setTimeout(() => {
-        callback(null, ['Post 1', 'Post 2']);
-    }, 1000);
-}
-
-getUser(1, (error, user) => {
-    if(error){
-        console.error(error);
-        return;
-    }
-    console.log('User', user);
-
-getUserPost(user, (error,post) => {
-    if(error){
-        console.error(error);
-        return;
-    }
-    console.log('Posts', post);
-    });
-});
-
-// --- async with promise ---
-
-function getUserPromise(userId)
-{
-    return new Promise(resolve => {
-        setTimeout(() =>{
-            resolve ({id : userId, name:'John'});
-        }, 1000);
-    });
-}
-
-function getPostUserPromise(post)
-{
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve (['post 1', 'post 2']);
-        }, 1000);
-    });
-}
-
-getUserPromise(1)
-    .then(user => {
-        console.log('User' , user);
-        return getPostUserPromise(user);
-    })
-    .then(post => {
-        console.log('Post' , post);
-    })
-    .catch(error => {
-        console.error(error);
-    });
-
-
-async function getUserAndPost(){
     try{
-        const user = await getUserPromise(1);
-        console.log('user :', user);
-
-        const post = await getPostUserPromise(user);
-        console.log('post :', post);
+        const data = await fs.readFile(`user/${userid}.json`, 'utf8');
+        const user = JSON.parse(data);
+    
+        if(!user.email){
+            throw new error('data email tidak ditemukan');
+        }
+    
+        return user;
     }catch(error){
-        console.error(error);
-    }
-}
+        if(error.code === 'ENOENT'){
+            throw new error('data userID tidak ditemukan');
+        }else if(Error instanceof SyntaxError){
+            throw new error('format tidak sesuai');
+        }
 
-getUserAndPost();
+        throw error;
+    }finally{
+        console.log(`finally prosessing user id ${userid}`);
+    }
+} 
+
+(async () => {
+    try{
+        const user = await loadData(123);
+        console.log('user data', user);
+    }catch(error){
+        console.error('failed', error.message);
+    }
+})();

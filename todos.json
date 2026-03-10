@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "task": "Belajar Node.js"
+  },
+  {
+    "id": 2,
+    "task": "Belajar Async Await"
+  },
+  {
+    "id": 3,
+    "task": "Belajar Async Await"
+  },
+  {
+    "id": 4
+  },
+  {
+    "id": 5
+  },
+  {
+    "id": 6
+  },
+  {
+    "id": 7
+  },
+  {
+    "id": 8
+  },
+  {
+    "id": 9,
+    "task": "belajar nodeJS"
+  },
+  {
+    "id": 10,
+    "task": "sad"
+  },
+  {
+    "id": null,
+    "task": "belajar nodeJS backend"
+  }
+]
