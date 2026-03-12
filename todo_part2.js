@@ -47,7 +47,7 @@ const server = http.createServer(async (req, res) => {
                 console.log(newTodo);
 
                 const todos = await readTodos();
-
+                
                 const todo = {
                     id: todos.length + 1,
                     task: newTodo.task

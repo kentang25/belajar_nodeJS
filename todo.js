@@ -1,7 +1,7 @@
 const http  = require('http');
 const fs    = require('fs').promises;
 
-const port = 3000;
+const port = 3001;
 
 async function readTodos()
 {
@@ -18,21 +18,23 @@ const server = http.createServer(async (req, res) => {
     if(req.method === 'GET' && req.url === '/'){
         try{
             const html = await fs.readFile('index.html');
-            res.writeHead(200, {'Content-Type':'html/text'});
+            res.writeHead(200, {'Content-Type':'text/html'});
             res.end(html);
         }catch(error){
-            res.writeHead(505);
+            res.writeHead(500);
             res.end('file tidak ditemukan');
         }
     } 
     else if(req.method === 'GET' && req.url === '/todos'){
         try{
-            const addTodos = await readTodos();
-            res.writeHead(200,{'Content-Type':'application/json'});
-            res.end(readTodos);
+            const todos = await readTodos();
+
+            // console.log("TODOS : ", todos);
+            res.writeHead(200, {'Content-Type' : 'application/json'});
+            res.end(JSON.stringify(todos));
         }catch(error){
-            res.writeHead(505);
-            res.end('error menampilkan data');
+            res.writeHead(500);
+            res.end('error membaca data');
         }
     }
 
@@ -48,7 +50,7 @@ const server = http.createServer(async (req, res) => {
                 const newTodos = JSON.parse(body);
                 const todos = await readTodos();
                 const todo  = {
-                    id : todos.lenght+1,
+                    id : todos.length+1,
                     task : newTodos.task
                 }
 
@@ -59,14 +61,30 @@ const server = http.createServer(async (req, res) => {
                 res.writeHead(201, {'Content-Type':'application/json'});
                 res.end(JSON.stringify(todos));
             }catch(error){
-                res.writeHead(505);
+                res.writeHead(500);
                 res.end('error menambah todos');
             }
         });
-    }else{
+    }
+    else if (req.method === 'DELETE' && req.url.startsWith('/todos/')) {
+        try {
+            const id = parseInt(req.url.split('/')[2]);
+            let todos = await readTodos();
+            todos = todos.filter(todo => todo.id !== id && todo.id !== null);
+            await saveTodos(todos);
+            res.writeHead(200, {'Content-Type':'application/json'});
+            res.end(JSON.stringify({deleted: true}));
+        } catch(error) {
+            res.writeHead(500);
+            res.end('Error deleting todo');
+        }
+    }
+    else{
+
         res.writeHead(404);
         res.end('not found');
     }
+
 });
 
 server.listen(port, () =>{

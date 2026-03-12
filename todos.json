@@ -4,38 +4,35 @@
     "task": "Belajar Node.js"
   },
   {
-    "id": 2,
-    "task": "Belajar Async Await"
-  },
-  {
     "id": 3,
     "task": "Belajar Async Await"
-  },
-  {
-    "id": 4
-  },
-  {
-    "id": 5
-  },
-  {
-    "id": 6
-  },
-  {
-    "id": 7
-  },
-  {
-    "id": 8
   },
   {
     "id": 9,
     "task": "belajar nodeJS"
   },
   {
-    "id": 10,
-    "task": "sad"
+    "id": 14,
+    "task": "belajar nodeJS baru"
   },
   {
-    "id": null,
-    "task": "belajar nodeJS backend"
+    "id": 17,
+    "task": "belajar"
+  },
+  {
+    "id": 18,
+    "task": "belajar nodeJS baru2"
+  },
+  {
+    "id": 19,
+    "task": "belajar2"
+  },
+  {
+    "id": 20,
+    "task": "belajar3"
+  },
+  {
+    "id": 10,
+    "task": "belajar backend nodeJS"
   }
 ]
