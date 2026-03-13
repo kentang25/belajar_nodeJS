@@ -1,7 +1,7 @@
 const http  = require('http');
 const fs    = require('fs').promises;
 
-const port = 3001;
+const port = 3000;
 
 async function readTodos()
 {
@@ -48,11 +48,15 @@ const server = http.createServer(async (req, res) => {
         req.on('end', async () => {
             try{
                 const newTodos = JSON.parse(body);
+                                console.log(newTodos);
                 const todos = await readTodos();
                 const todo  = {
                     id : todos.length+1,
-                    task : newTodos.task
+                    task : newTodos.task,
+                    dueDate : newTodos.dueDate
                 }
+
+
 
                 todos.push(todo);
 
