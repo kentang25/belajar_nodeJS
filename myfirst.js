@@ -303,37 +303,56 @@
 
 // getUserAndPost();
 
-const fs = require('fs').promises;
+// const fs = require('fs').promises;
 
-async function loadData(userid)
-{
-    try{
-        const data = await fs.readFile(`user/${userid}.json`, 'utf8');
-        const user = JSON.parse(data);
+// async function loadData(userid)
+// {
+//     try{
+//         const data = await fs.readFile(`user/${userid}.json`, 'utf8');
+//         const user = JSON.parse(data);
     
-        if(!user.email){
-            throw new error('data email tidak ditemukan');
-        }
+//         if(!user.email){
+//             throw new error('data email tidak ditemukan');
+//         }
     
-        return user;
-    }catch(error){
-        if(error.code === 'ENOENT'){
-            throw new error('data userID tidak ditemukan');
-        }else if(Error instanceof SyntaxError){
-            throw new error('format tidak sesuai');
-        }
+//         return user;
+//     }catch(error){
+//         if(error.code === 'ENOENT'){
+//             throw new error('data userID tidak ditemukan');
+//         }else if(Error instanceof SyntaxError){
+//             throw new error('format tidak sesuai');
+//         }
 
-        throw error;
-    }finally{
-        console.log(`finally prosessing user id ${userid}`);
-    }
-} 
+//         throw error;
+//     }finally{
+//         console.log(`finally prosessing user id ${userid}`);
+//     }
+// } 
 
-(async () => {
-    try{
-        const user = await loadData(123);
-        console.log('user data', user);
-    }catch(error){
-        console.error('failed', error.message);
-    }
-})();
+// (async () => {
+//     try{
+//         const user = await loadData(123);
+//         console.log('user data', user);
+//     }catch(error){
+//         console.error('failed', error.message);
+//     }
+// })();
+
+export function add(a, b){
+    return a + b;
+}
+
+export function subtract(a, b){
+    return a + b;
+}
+// Only one default export per module
+export default function() {
+  console.log('I am the default export');
+}
+
+// Or with a named function/class/object
+function mainFunction() {
+  return 'Main functionality';
+}
+
+mainFunction;
